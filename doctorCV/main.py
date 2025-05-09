@@ -6,6 +6,10 @@ from agents.analyzer import analyze_cv
 from agents.improver import improve_cv
 from utils.pdf_writer import save_cv_as_pdf
 
+os.makedirs("input", exist_ok=True)
+os.makedirs("output", exist_ok=True)
+
+
 # Bu satır ilk Streamlit komutu olmalı
 st.set_page_config(page_title="DoctorCV", page_icon="🩺")
 
