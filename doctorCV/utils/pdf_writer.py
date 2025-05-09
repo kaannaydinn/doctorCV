@@ -11,9 +11,13 @@ import os
 def save_cv_as_pdf(text, output_path):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    # Font yükle (DejaVu)
-    pdfmetrics.registerFont(TTFont("DejaVu", "utils/fonts/DejaVuSans.ttf"))
-    pdfmetrics.registerFont(TTFont("DejaVu-Bold", "utils/fonts/DejaVuSans-Bold.ttf"))
+    # Dinamik font yolu (hem yerel hem Cloud için)
+    base_dir = os.path.dirname(__file__)
+    font_path = os.path.join(base_dir, "fonts", "DejaVuSans.ttf")
+    bold_font_path = os.path.join(base_dir, "fonts", "DejaVuSans-Bold.ttf")
+
+    pdfmetrics.registerFont(TTFont("DejaVu", font_path))
+    pdfmetrics.registerFont(TTFont("DejaVu-Bold", bold_font_path))
 
     c = canvas.Canvas(output_path, pagesize=A4)
     width, height = A4
