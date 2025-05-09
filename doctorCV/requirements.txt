@@ -1,0 +1,17 @@
+# Core
+python-dotenv
+openai==0.28
+
+# PDF & DOCX metin okuma
+pdfplumber
+python-docx
+
+# PDF çıktı (fpdf alternatifi, Türkçe destekli)
+reportlab
+
+# Arayüz
+streamlit
+
+# Gerekirse grafik ve ilerideki modüller için (opsiyonel)
+matplotlib
+pandas
