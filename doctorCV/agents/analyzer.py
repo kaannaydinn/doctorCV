@@ -18,7 +18,7 @@ def analyze_cv(cv_path):
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "Sen deneyimli bir insan kaynakları uzmanısın."},
                 {"role": "user", "content": prompt}
