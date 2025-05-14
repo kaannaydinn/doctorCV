@@ -15,3 +15,6 @@ streamlit
 # Gerekirse grafik ve ilerideki modüller için (opsiyonel)
 matplotlib
 pandas
+
+apify-client
+
