@@ -7,11 +7,12 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib import colors
 import os
+import textwrap
 
 def save_cv_as_pdf(text, output_path):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    # Dinamik font yolu (hem yerel hem Cloud için)
+    # Font yolu (DejaVu)
     base_dir = os.path.dirname(__file__)
     font_path = os.path.join(base_dir, "fonts", "DejaVuSans.ttf")
     bold_font_path = os.path.join(base_dir, "fonts", "DejaVuSans-Bold.ttf")
@@ -24,45 +25,51 @@ def save_cv_as_pdf(text, output_path):
 
     margin_x = 25 * mm
     y = height - 30 * mm
-    line_spacing = 6 * mm
+    line_spacing = 5 * mm
+    max_width = width - 2 * margin_x
+    
+    def draw_wrapped(text, x, y, font_name, font_size):
+        c.setFont(font_name, font_size)
+        wrapped = textwrap.wrap(text, width=100)
+        for line in wrapped:
+            c.drawString(x, y, line)
+            y -= line_spacing
+        return y
+
+    # Başlık tanımları
+    section_titles = {
+        "eğitim", "hakkımda", "iş deneyimi", "teknik yetenekler",
+        "diller", "ilgi alanları", "education", "work experience",
+        "skills", "languages", "interests"
+    }
 
     lines = text.split("\n")
-
     for line in lines:
         clean = line.strip()
 
         # Sayfa sonu kontrolü
         if y < 25 * mm:
             c.showPage()
-            c.setFont("DejaVu", 11)
             y = height - 30 * mm
 
-        # Boş satır → 1 satır aşağı
+        # Boş satır → 1 satır boşluk
         if not clean:
             y -= line_spacing / 2
             continue
 
-        # Başlıklar büyük harfli ve kalın
-        if clean.lower() in {
-            "eğitim", "hakkımda", "iş deneyimi", "teknik yetenekler",
-            "diller", "ilgi alanları", "education", "work experience",
-            "skills", "languages", "interests"
-        }:
-            c.setFont("DejaVu-Bold", 12)
+        # Başlıklar
+        if clean.lower() in section_titles:
+            c.setFont("DejaVu-Bold", 13)
             c.drawString(margin_x, y, clean.upper())
-            y -= line_spacing
+            y -= line_spacing * 1.5
             continue
 
         # Bullet point'li satırlar
         if clean.startswith("-") or clean.startswith("•"):
             bullet = "• " + clean.lstrip("-•").strip()
-            c.setFont("DejaVu", 11)
-            c.drawString(margin_x + 5, y, bullet)
+            y = draw_wrapped(bullet, margin_x + 10, y, "DejaVu", 11)
         else:
-            c.setFont("DejaVu", 11)
-            c.drawString(margin_x, y, clean)
-
-        y -= line_spacing
+            y = draw_wrapped(clean, margin_x, y, "DejaVu", 11)
 
     c.save()
     print(f"✅ PDF çıktı başarıyla oluşturuldu: {output_path}")
