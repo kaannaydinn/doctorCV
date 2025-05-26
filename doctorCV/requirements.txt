@@ -2,19 +2,20 @@
 python-dotenv
 openai==0.28
 
-# PDF & DOCX metin okuma
+# PDF & DOCX text extraction
 pdfplumber
 python-docx
 
-# PDF çıktı (fpdf alternatifi, Türkçe destekli)
+# PDF output (Turkish supported)
 reportlab
 
-# Arayüz
+# Interface
 streamlit
+streamlit-lottie
 
-# Gerekirse grafik ve ilerideki modüller için (opsiyonel)
+# Optional: for visualization and data handling
 matplotlib
 pandas
 
+# Apify
 apify-client
-
