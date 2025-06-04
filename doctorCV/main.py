@@ -1,7 +1,7 @@
-
 import streamlit as st
 import os
 import re
+import tempfile
 import requests
 from agents.analyzer import analyze_cv
 from agents.improver import improve_cv
@@ -101,9 +101,10 @@ if not submitted:
 
 if submitted and uploaded_file and job_title and location:
     filename = uploaded_file.name
-    input_path = os.path.join("input", filename)
-    with open(input_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
+    # Geçici dosya oluştur
+    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(filename)[-1]) as temp_file:
+        temp_file.write(uploaded_file.getbuffer())
+        input_path = temp_file.name
     st.success(f"📄 Resume uploaded: {filename}")
 
     local_job_data = load_job_data(company_name, job_title, location)
@@ -179,7 +180,7 @@ if submitted and uploaded_file and job_title and location:
     else:
         st.error("⚠️ PDF could not be created.")
 
-# Footer with Bosphorus image
+# Footer
 st.markdown("""
     <hr style="margin-top: 40px;">
     <div style='text-align: center;'>
