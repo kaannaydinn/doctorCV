@@ -184,6 +184,6 @@ st.markdown("""
     <hr style="margin-top: 40px;">
     <div style='text-align: center;'>
         <img src='https://upload.wikimedia.org/wikipedia/commons/5/5d/Bosphorus_University.jpg' width='250' style='border-radius: 6px; margin-bottom: 8px;'/>
-        <p style='color: #666; font-size: 13px;'>Made with ❤️ in Istanbul by Boğaziçi Students</p>
+        <p style='color: #666; font-size: 13px;'>Made with ❤️ in Istanbul by Boğaziçi MIS Students</p>
     </div>
 """, unsafe_allow_html=True)
