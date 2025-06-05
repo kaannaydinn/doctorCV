@@ -1,3 +1,4 @@
+
 import streamlit as st
 import os
 import re
@@ -8,14 +9,11 @@ from agents.improver import improve_cv
 from utils.pdf_writer import save_cv_as_pdf
 from utils.apify_agent import fetch_linkedin_data
 from utils.skill_matcher import extract_skills_from_text, extract_skills_from_job_description
-from utils.job_extractor import load_job_data, extract_company_block
 from streamlit_lottie import st_lottie
 import openai
 
-# Page setup
 st.set_page_config(page_title="DoctorCV", page_icon="🩺", layout="centered")
 
-# Apple-style UI in English
 st.markdown("""
     <style>
         html, body, .stApp {
@@ -53,7 +51,6 @@ def load_lottie_url(url):
         return None
     return r.json()
 
-# Header
 st.markdown("""
     <div style='text-align: center; margin-top: 20px; margin-bottom: 5px;'>
         <h1>🩺 DoctorCV</h1>
@@ -61,7 +58,6 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Form input
 with st.form(key="cv_form"):
     st.subheader("📄 Upload Your Resume")
     uploaded_file = st.file_uploader("Select a PDF or DOCX file", type=["pdf", "docx"])
@@ -101,47 +97,50 @@ if not submitted:
 
 if submitted and uploaded_file and job_title and location:
     filename = uploaded_file.name
-    # Geçici dosya oluştur
     with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(filename)[-1]) as temp_file:
         temp_file.write(uploaded_file.getbuffer())
         input_path = temp_file.name
     st.success(f"📄 Resume uploaded: {filename}")
 
-    local_job_data = load_job_data(company_name, job_title, location)
-    if local_job_data:
-        job_desc = local_job_data.get("job_description", "")
-        company_block = extract_company_block(job_desc, company_name)
-        if company_block:
-            st.markdown("### 🏢 Company-specific Description")
-            st.markdown(company_block)
-            if st.checkbox("💡 Summarize key requirements with GPT", value=True):
-                with st.spinner("Analyzing with GPT..."):
-                    response = openai.ChatCompletion.create(
-                        model="gpt-4o",
-                        messages=[
-                            {"role": "system", "content": "You are an experienced HR professional."},
-                            {"role": "user", "content": f"List the key technical and soft skills expected based on the following job ad:\n\n{company_block}"}
-                        ],
-                        temperature=0.4,
-                        max_tokens=500
-                    )
-                    st.markdown("#### 🧠 GPT Summary:")
-                    st.markdown(response["choices"][0]["message"]["content"])
-
     with st.spinner("🔎 Fetching job data from LinkedIn..."):
         job_data = fetch_linkedin_data(
             job_title=job_title,
             company_name=company_name,
-            location=location,
-            seniority_level=seniority_level,
-            industries=industry,
-            job_function=None
+            location=location
         )
 
     if not job_data.get("job_description"):
         st.warning("⚠️ Could not fetch job description.")
     else:
         st.success("✅ Job description retrieved.")
+
+    company_block = None
+    if company_name:
+        for job in job_data.get("all_jobs", []):
+            firm = job.get("company_name", "") or job.get("company", "")
+            if company_name.lower() in firm.lower():
+                company_block = job.get("description", "").strip()
+                break
+
+    if company_block:
+        st.markdown("### 🏢 Company-specific Description")
+        st.markdown(company_block)
+        if st.checkbox("💡 Summarize key requirements with DoctorCV", value=True):
+            with st.spinner("Analyzing with GPT..."):
+                response = openai.ChatCompletion.create(
+                    model="gpt-4o",
+                    messages=[
+                        {"role": "system", "content": "You are an experienced HR professional."},
+                        {"role": "user", "content": f"""List the key technical and soft skills expected based on the following job ad:
+
+{company_block}"""}],
+                    temperature=0.4,
+                    max_tokens=500
+                )
+            st.markdown("#### 🧠 DoctorCV Summary:")
+            st.markdown(response["choices"][0]["message"]["content"])
+    else:
+        st.info("No specific job found for the given company name.")
 
     with st.spinner("🧠 Analyzing resume..."):
         analysis = analyze_cv(input_path, job_data, job_title, company_name)
@@ -153,7 +152,7 @@ if submitted and uploaded_file and job_title and location:
     st.subheader("✨ Improved Resume")
     st.text_area("Improved Text", value=improved_cv or "⚠️ Could not generate content.", height=300)
 
-    reference_text = job_data.get("job_description", "")
+    reference_text = company_block if company_block else job_data.get("job_description", "")
     reference_skills_raw = extract_skills_from_job_description(reference_text)
     reference_skills = [re.split(r"[:%(]", s)[0].strip().lower() for s in reference_skills_raw]
 
@@ -180,7 +179,6 @@ if submitted and uploaded_file and job_title and location:
     else:
         st.error("⚠️ PDF could not be created.")
 
-# Footer
 st.markdown("""
     <hr style="margin-top: 40px;">
     <div style='text-align: center;'>
