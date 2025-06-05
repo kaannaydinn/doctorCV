@@ -1,49 +1,49 @@
 # utils/prompts.py
 
 ANALYSIS_PROMPT = """
-Aşağıdaki CV metnini analiz et.
+Analyze the CV text below.
 
-1. Genel bir değerlendirme yap: (dil, yapı, uzunluk)
-2. Eksik veya geliştirilmeye açık yönleri belirt (madde madde)
-3. Geliştirme önerileri ver (net ve uygulanabilir)
+1. Provide a general evaluation (language, structure, length)
+2. Identify areas that are missing or need improvement (as bullet points)
+3. Offer improvement suggestions (clear and actionable)
 
---- CV METNİ ---
+--- CV TEXT ---
 {cv}
 """
 
 IMPROVEMENT_PROMPT = """
-Aşağıda bir CV metni ve bu metne ait analiz özeti yer alıyor.
+Below is a CV text and its corresponding analysis summary.
 
-Senin görevin:
-- Eksik ve yetersiz alanları geliştir
-- Yeni bölümler ekle (Hakkımda, Teknik Beceriler vb.)
-- Geliştirilmiş CV metnini üret (tümüyle yeniden yaz)
+Your task:
+- Improve the incomplete and insufficient parts
+- Add new sections (About Me, Technical Skills, etc.)
+- Produce a fully rewritten and improved version of the CV
 
---- CV METNİ ---
+--- CV TEXT ---
 {cv}
 
---- ANALİZ ÖZETİ ---
+--- ANALYSIS SUMMARY ---
 {analysis}
 """
 
 CONTEXTUAL_ANALYSIS_PROMPT = """
-Kullanıcının mevcut CV metni aşağıda verilmiştir.  
-Ayrıca kullanıcının başvurmak istediği pozisyon ve şirket belirtilmiştir.
+The user's current CV text is provided below.  
+The target position and company the user is applying to are also specified.
 
-Ek olarak, gerçek LinkedIn profillerinden toplanan teknik beceriler de verilmiştir.
+Additionally, real technical skills gathered from LinkedIn profiles are provided.
 
-Senin görevin:
-1. Bu CV’yi teknik açıdan değerlendir (içerik, beceriler, uyum)
-2. Eksik becerileri tespit et
-3. CV’yi hedef pozisyona uygun şekilde geliştir (gerekiyorsa yeni bölümler ekle)
-4. Geliştirilmiş tam CV metnini yaz (sadece metin, markdown veya stil olmadan)
+Your task:
+1. Evaluate this CV technically (content, skills, relevance)
+2. Identify missing skills
+3. Improve the CV to better match the target position (add new sections if necessary)
+4. Write the full improved CV text (plain text only, no markdown or styling)
 
---- CV METNİ ---
+--- CV TEXT ---
 {cv}
 
---- HEDEF POZİSYON & ŞİRKET ---
+--- TARGET POSITION & COMPANY ---
 {position} @ {company}
 
---- GERÇEK LINKEDIN VERİSİ (TEKNİK BECERİLER) ---
+--- REAL LINKEDIN DATA (TECHNICAL SKILLS) ---
 {job_data}
 """

@@ -25,16 +25,16 @@ def improve_cv(cv_path, analysis_summary, job_data=None, position="Pozisyon beli
     extra_context = "\n".join(context_parts)
 
     prompt = f"""
-Aşağıda bir adayın özgeçmiş metni, bir analiz özeti, ve hedeflediği pozisyona ait gerçek beceriler yer alıyor.
+Below are a candidate's resume text, an analysis summary, and the actual skills required for the target position.
 
-Senin görevin:
-- Bu CV'yi yalnızca adayın **zaten sahip olduğu** bilgilerle yeniden yazmak
-- Biçimsel olarak iyileştirmek (düzenli, açık, etkileyici)
-- Gereksiz tekrarları azaltmak
-- Hiçbir yeni beceri uydurma
-- Eksik becerileri belirtme
-- Sadece adayın mevcut niteliklerini en iyi şekilde ifade eden bir metin üret
+Your task is to:
 
+Rewrite the CV using only the information the candidate already possesses
+Improve the formatting (make it organized, clear, and impactful)
+Reduce unnecessary repetition
+Do not invent any new skills
+Point out missing skills
+Produce a text that expresses the candidate’s existing qualifications in the best possible way
 --- CV METNİ ---
 {cv_text}
 
@@ -55,7 +55,7 @@ Senin görevin:
         response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "Sen profesyonel bir CV danışmanısın."},
+                {"role": "system", "content": "You are a professional CV Consultant."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
